@@ -54,11 +54,7 @@ Fake-News/
 │   ├── bert_model.py         # BERT模型
 │   ├── bert_tokenization.py  # BERT分词
 │   └── score.py              # 评分工具
-└── submits/                 # 预测结果
-    ├── catboost_submit.csv   # CatBoost提交结果
-    ├── lr_submit.csv         # 逻辑回归提交结果
-    ├── README.md             # 提交说明
-    └── xgboost_submit.csv    # XGBoost提交结果
+└──
 ```
 
 ## 数据处理流程

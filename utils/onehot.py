@@ -3,8 +3,8 @@
 import pickle
 
 import pandas as pd
-from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 
 import config

@@ -83,7 +83,7 @@ class TfidfFeatureGenerator(object):
                 count += 1
 
         print("feature set nums: ", len(vocabulary))
-        feature_names = vec_text.get_feature_names()
+        feature_names = vec_text.get_feature_names_out()
 
         ch2_precent = SelectPercentile(chi2, percentile=100)
         ch2 = ch2_precent.fit(text_tfidf[:n_train], df.iloc[:n_train]['label'])

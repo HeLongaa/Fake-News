@@ -47,7 +47,7 @@ class Word2VecFeatureGenerator(object):
             print('train w2v model...')
             # train model
             w2v = gensim.models.Word2Vec(sg=1, sentences=gensim.models.word2vec.LineSentence(text_segment_path),
-                                         size=300, window=5, min_count=5, iter=40)
+                                         vector_size=300, window=5, min_count=5, epochs=40)
             w2v.wv.save_word2vec_format(w2v_bin_path, binary=True)
             print("save w2v model: %s." % w2v_bin_path)
 
