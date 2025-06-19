@@ -10,7 +10,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Dense, Dropout, Flatten, Input, MaxPooling1D, Convolution1D
 from keras.layers import Embedding
 from keras.layers import LSTM, Bidirectional
-from keras.layers.merge import Concatenate
+from keras.layers import Concatenate
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import SpatialDropout1D, Conv1D, Activation, Add
