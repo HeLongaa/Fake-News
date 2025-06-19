@@ -117,21 +117,32 @@ python preprocess.py
 python generate_features.py
 ```
 
-### 使用方法
+### 训练与模型选择
 
-```bash
-python train.py
-```
+支持通过命令行参数选择训练的模型类型：
 
-默认只运行基础模型（逻辑回归），如需运行其他模型，请修改`train.py`中的主函数：
+- 只训练基础模型（逻辑回归）：
+  ```bash
+  python train.py --model=base
+  ```
+- 训练所有经典机器学习模型（LR、XGBoost、CatBoost）：
+  ```bash
+  python train.py --model=classic
+  ```
+- 训练所有深度学习模型（TextCNN、RNN、DPCNN）：
+  ```bash
+  python train.py --model=deep
+  ```
+- 训练BERT模型：
+  ```bash
+  python train.py --model=bert
+  ```
 
-```python
-if __name__ == '__main__':
-    base_model()               # 运行基础模型
-    # train_classic_models()   # 运行传统机器学习模型
-    # train_deep_models()      # 运行深度学习模型
-    # train_bert_model()       # 运行BERT模型
-```
+如不指定`--model`参数，默认只训练基础模型（base）。
+
+### 模型文件保存
+
+所有训练得到的模型文件均会自动保存在 `output/models/` 目录下，便于统一管理和后续加载。
 
 ## 评估指标
 

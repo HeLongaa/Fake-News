@@ -18,5 +18,9 @@ vocab_path = output_dir + 'vocab.txt'
 pretrained_bert_path = '/bert/chinese_L-12_H-768_A-12'
 is_debug = False
 
+models_dir = output_dir + 'models/'
+if not os.path.exists(models_dir):
+    os.makedirs(models_dir)
+
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
