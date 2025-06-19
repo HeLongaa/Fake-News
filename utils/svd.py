@@ -6,7 +6,7 @@ from scipy.sparse import vstack
 from sklearn.decomposition import TruncatedSVD
 
 import config
-from features.tfidf_feature import TfidfFeatureGenerator
+from utils.tfidf import TfidfFeatureGenerator
 
 
 class SvdFeatureGenerator(object):

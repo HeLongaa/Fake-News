@@ -20,7 +20,7 @@ Fake-News/
 ├── config.py                # 配置文件
 ├── preprocess.py            # 数据预处理
 ├── generate_features.py     # 特征生成
-├── train_models.py          # 模型训练和预测
+├── train.py                 # 模型训练和预测
 ├── requirements.txt         # 依赖库列表
 ├── data/                    # 数据文件
 │   ├── train_sample.csv     # 训练集样例
@@ -33,31 +33,27 @@ Fake-News/
 │   ├── model.png            # 模型结构图
 │   ├── stacking.png         # 模型集成图
 │   └── train_data.png       # 训练数据分析图
-├── features/                # 特征提取
+├── utils/                   # 工具函数和特征提取
 │   ├── __init__.py
-│   ├── char_tfidf_feature.py # 字符级TF-IDF
-│   ├── count_feature.py      # 词频统计
-│   ├── io_util.py            # IO工具
-│   ├── math_util.py          # 数学工具
-│   ├── ngram.py              # N-gram处理
-│   ├── onehot_feature.py     # 独热编码
-│   ├── sentiment_feature.py  # 情感分析
-│   ├── svd_feature.py        # SVD降维
-│   ├── tfidf_feature.py      # 词级TF-IDF
-│   ├── tokenizer.py          # 文本分词
-│   └── word2vec_feature.py   # 词向量特征
+│   ├── char_tfidf.py        # 字符级TF-IDF
+│   ├── count.py             # 词频统计
+│   ├── io_util.py           # IO工具
+│   ├── math_util.py         # 数学工具
+│   ├── ngram.py             # N-gram处理
+│   ├── onehot.py            # 独热编码
+│   ├── sentiment.py         # 情感分析
+│   ├── svd.py               # SVD降维
+│   ├── tfidf.py             # 词级TF-IDF
+│   ├── tokenizer.py         # 文本分词
+│   └── word2vec.py          # 词向量特征
 ├── models/                  # 模型实现
 │   ├── __init__.py
 │   ├── base_model.py         # 模型基类
+│   ├── MachineLearningModels.py # 传统机器学习模型
+│   ├── DeepLearningModels.py    # 深度学习模型
 │   ├── bert_model.py         # BERT模型
 │   ├── bert_tokenization.py  # BERT分词
-│   ├── catboost_model.py     # CatBoost模型
-│   ├── dpcnn_model.py        # DPCNN模型
-│   ├── lr_model.py           # 逻辑回归模型
-│   ├── rnn_model.py          # RNN模型
-│   ├── score.py              # 评分工具
-│   ├── textcnn_model.py      # TextCNN模型
-│   └── xgboost_model.py      # XGBoost模型
+│   └── score.py              # 评分工具
 └── submits/                 # 预测结果
     ├── catboost_submit.csv   # CatBoost提交结果
     ├── lr_submit.csv         # 逻辑回归提交结果
@@ -76,13 +72,13 @@ Fake-News/
    - 使用jieba进行中文分词
    - 生成unigram、bigram和trigram特征
    - 应用多种特征提取器：
-     * 词频统计
-     * 字符级TF-IDF
-     * 词级TF-IDF
-     * SVD降维
-     * Word2Vec词向量
-     * 情感分析
-     * 独热编码
+     * 词频统计（count.py）
+     * 字符级TF-IDF（char_tfidf.py）
+     * 词级TF-IDF（tfidf.py）
+     * SVD降维（svd.py）
+     * Word2Vec词向量（word2vec.py）
+     * 情感分析（sentiment.py）
+     * 独热编码（onehot.py）
 
 3. **模型训练与预测**：
    - 传统机器学习模型：逻辑回归、XGBoost、CatBoost
@@ -91,13 +87,13 @@ Fake-News/
 
 ## 主要模型
 
-### 传统机器学习模型
+### 传统机器学习模型 (MachineLearningModels.py)
 
 - **逻辑回归**：基础线性分类器，计算速度快，可解释性好
 - **XGBoost**：梯度提升树模型，处理非线性关系能力强
 - **CatBoost**：针对类别特征优化的梯度提升树模型
 
-### 深度学习模型
+### 深度学习模型 (DeepLearningModels.py)
 
 - **TextCNN**：使用卷积神经网络提取文本局部特征
 - **RNN**：使用循环神经网络捕捉文本序列特征
@@ -125,13 +121,13 @@ python preprocess.py
 python generate_features.py
 ```
 
-### 模型训练与预测
+### 使用方法
 
 ```bash
-python train_models.py
+python train.py
 ```
 
-默认只运行基础模型（逻辑回归），如需运行其他模型，请修改`train_models.py`中的主函数：
+默认只运行基础模型（逻辑回归），如需运行其他模型，请修改`train.py`中的主函数：
 
 ```python
 if __name__ == '__main__':
@@ -163,7 +159,7 @@ if __name__ == '__main__':
 
 ## 项目特点
 
-1. **模块化设计**：特征提取器和模型采用面向对象设计，易于扩展和维护
+1. **模块化设计**：工具函数和模型采用面向对象设计，易于扩展和维护
 2. **多特征融合**：结合文本统计特征、语义特征和情感特征
 3. **多模型集成**：支持多种类型的模型训练和预测
 4. **灵活配置**：通过配置文件集中管理参数

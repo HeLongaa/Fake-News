@@ -1,21 +1,27 @@
 # -*- coding: utf-8 -*-
 
+"""
+@description: 数据特征生成和标签读取
+1. 生成n-gram特征
+2. 生成其他特征（词频、字符tf-idf、情感分析、词向量等）
+3. 读取特征和标签
+"""
 import os
 
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
-from features import ngram
-from features.char_tfidf_feature import CharTfidfFeatureGenerator
-from features.count_feature import CountFeatureGenerator
-from features.onehot_feature import OnehotFeatureGenerator
-from features.sentiment_feature import SentimentFeatureGenerator
-from features.tfidf_feature import TfidfFeatureGenerator
-from features.tokenizer import tokenizer
-from features.word2vec_feature import Word2VecFeatureGenerator
+from utils import ngram
+from utils.char_tfidf import CharTfidfFeatureGenerator
+from utils.count import CountFeatureGenerator
+from utils.onehot import OnehotFeatureGenerator
+from utils.sentiment import SentimentFeatureGenerator
+from utils.tfidf import TfidfFeatureGenerator
+from utils.tokenizer import tokenizer
+from utils.word2vec import Word2VecFeatureGenerator
 
 import config
-from features.svd_feature import SvdFeatureGenerator
+from utils.svd import SvdFeatureGenerator
 
 
 def generate_features_label():

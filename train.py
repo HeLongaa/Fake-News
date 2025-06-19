@@ -3,8 +3,8 @@
 import pandas as pd
 
 import config
-from features.char_tfidf_feature import read_chartfidf_feature_label
-from features.onehot_feature import read_onehot_feature_label
+from utils.char_tfidf import read_chartfidf_feature_label
+from utils.onehot import read_onehot_feature_label
 from generate_features import read_features_label
 
 
@@ -38,9 +38,8 @@ def base_model():
 
 
 def train_classic_models():
-    from models.catboost_model import CatBoostModel
-    from models.lr_model import LRModel
-    from models.xgboost_model import XgboostModel  # 该引用必须在bert之前
+    from models.MachineLearningModels import CatBoostModel, LRModel, XgboostModel
+
     train_x, test_x, train_y = read_features_label()
     models = [LRModel(), XgboostModel(), CatBoostModel()]
     for m in models:
@@ -52,9 +51,8 @@ def train_classic_models():
 
 
 def train_deep_models():
-    from models.rnn_model import RNNModel
-    from models.textcnn_model import TextCNNModel
-    from models.dpcnn_model import DpcnnModel
+    from models.DeepLearningModels import RNNModel, TextCNNModel, DpcnnModel
+
     train_x, test_x, train_y, vocab = read_onehot_feature_label()
     models = [TextCNNModel(max_len=300,
                            num_folds=1,
