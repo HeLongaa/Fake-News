@@ -109,6 +109,7 @@ def train_bert_model():
 
 if __name__ == '__main__':
     base_model()
+
     # train_classic_models()
     # train_deep_models()
     # train_bert_model()

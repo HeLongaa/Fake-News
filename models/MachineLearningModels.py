@@ -8,6 +8,7 @@
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
+from sklearn.externals import joblib
 
 from models.base_model import BaseClassicModel
 
