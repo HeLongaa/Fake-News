@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-
+import sys
+import argparse
 import config
 from utils.char_tfidf import read_chartfidf_feature_label
 from utils.onehot import read_onehot_feature_label
@@ -108,8 +109,16 @@ def train_bert_model():
 
 
 if __name__ == '__main__':
-    base_model()
-
-    # train_classic_models()
-    # train_deep_models()
-    # train_bert_model()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, default='base', help='选择训练模型: base/classic/deep/bert')
+    args = parser.parse_args()
+    if args.model == 'base':
+        base_model()
+    elif args.model == 'classic':
+        train_classic_models()
+    elif args.model == 'deep':
+        train_deep_models()
+    elif args.model == 'bert':
+        train_bert_model()
+    else:
+        print('未知模型类型: %s, 可选: base/classic/deep/bert' % args.model)

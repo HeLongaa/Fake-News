@@ -10,7 +10,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Dense, Dropout, Flatten, Input, MaxPooling1D, Convolution1D
 from keras.layers import Embedding
 from keras.layers import LSTM, Bidirectional
-from keras.layers.merge import Concatenate
+from keras.layers import Concatenate
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import SpatialDropout1D, Conv1D, Activation, Add
@@ -35,14 +35,14 @@ class TextCNNModel(BaseDeepModel):
                  vocabulary_size=20000,
                  dropout=0.5,
                  num_epochs=1,
-                 model_path=config.output_dir + 'textcnn.model'):
+                 model_path=None):
         if "," in filter_sizes:
             self.filter_sizes = filter_sizes.split(",")
         else:
             self.filter_sizes = [3, 4, 5]
         self.dropout = dropout
         self.num_filters = num_filters
-        self.model_path = model_path
+        self.model_path = model_path or (config.models_dir + 'textcnn.model')
         super(TextCNNModel, self).__init__(max_len=max_len,
                                            num_folds=num_folds,
                                            name=name,
@@ -103,8 +103,8 @@ class RNNModel(BaseDeepModel):
                  batch_size=64,
                  vocabulary_size=20000,
                  num_epochs=1,
-                 model_path=config.output_dir + 'rnn.model'):
-        self.model_path = model_path
+                 model_path=None):
+        self.model_path = model_path or (config.models_dir + 'rnn.model')
         super(RNNModel, self).__init__(max_len=max_len,
                                        num_folds=num_folds,
                                        name=name,
@@ -153,8 +153,8 @@ class DpcnnModel(BaseDeepModel):
                  vocabulary_size=20000,
                  num_epochs=1,
                  dropout=0.2,
-                 model_path=config.output_dir + 'dpcnn.model'):
-        self.model_path = model_path
+                 model_path=None):
+        self.model_path = model_path or (config.models_dir + 'dpcnn.model')
         self.dropout = dropout
         super().__init__(max_len=max_len,
                          num_folds=num_folds,

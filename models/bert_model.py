@@ -49,9 +49,9 @@ class BertModel(BaseDeepModel):
                  num_classes=2,
                  batch_size=32,
                  num_epochs=10,
-                 model_path=config.output_dir + 'bert_kmaxcnn_model'):
+                 model_path=None):
         self.bert_path = bert_path
-        self.model_path = model_path
+        self.model_path = model_path or (config.models_dir + 'bert_kmaxcnn_model')
         super(BertModel, self).__init__(max_len=max_len,
                                         name=name,
                                         num_classes=num_classes,
@@ -86,9 +86,10 @@ if __name__ == '__main__':
     m = BertModel(name='bert',
                   num_classes=2,
                   batch_size=32,
-                  num_epochs=1)
+                  num_epochs=1,
+                  model_path=None)
     # score = m.train_predict(train_x, train_y, test_x, predict_path)
-    b_model = kashgari.utils.load_model(config.output_dir + 'bert.model')
+    b_model = kashgari.utils.load_model(config.models_dir + 'bert.model')
     y_pred_train = b_model.predict(train_x[:5])
     from models.score import compute_acc
 
