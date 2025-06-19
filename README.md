@@ -1,4 +1,4 @@
-# 中文虚假新闻检测系统
+# 假新闻检测系统
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.10+-orange.svg)
@@ -7,210 +7,186 @@
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.0+-blueviolet.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 项目概述
+基于机器学习和自然语言处理的中文假新闻自动识别系统。
 
-本项目基于中文社交媒体谣言数据集，构建了一个自动检测虚假新闻的机器学习系统。系统能够通过分析微博文本内容及其传播特征，有效识别潜在的虚假信息，为社交媒体平台的内容审核和用户提供有力的信息甄别支持。
+## 项目简介
 
-## 数据集介绍
-
-本项目使用来自新浪微博不实信息举报平台的中文谣言数据集，该数据集分为两个部分：
-
-1. **原始谣言微博数据** (rumors_v170613.json)：
-   - 包含2009年至2017年的31669条谣言原微博
-   - 包含谣言编码、标题、举报者信息、谣言内容、审查结果等字段
-
-2. **CED_Dataset**：
-   - 包含1538条谣言和1849条非谣言
-   - 不仅包含原微博内容，还包含对应的转发与评论信息
-   - 结构分为：原始微博(original-microblog)、谣言转发(rumor-repost)和非谣言转发(non-rumor-repost)
-
-## 技术方案
-
-本项目采用以下步骤和技术实现虚假新闻检测：
-
-1. **数据预处理**：
-   - 文本清洗与规范化
-   - 中文分词与停用词过滤
-   - 特征抽取（文本特征、用户特征、传播特征）
-
-2. **模型构建**：
-   - 基础文本特征模型（TF-IDF、Word2Vec等）
-   - 深度学习模型（BERT、BiLSTM等）
-   - 融合模型（结合文本内容和传播特征）
-
-3. **评估指标**：
-   - 准确率(Accuracy)
-   - 精确率(Precision)
-   - 召回率(Recall)
-   - F1分数
-   - ROC曲线和AUC
+本项目旨在通过分析文本内容的语言特征，自动识别和分类真实新闻（标签0）与虚假新闻（标签1）。项目综合运用了多种特征提取方法和模型算法，实现了高效准确的假新闻检测。
 
 ## 项目结构
 
 ```
 Fake-News/
-│
-├── data/                      # 数据目录
-│   ├── rumors_v170613.json    # 原始谣言数据
-│   └── CED_Dataset/           # 包含转发信息的谣言数据集
-│       ├── original-microblog/ # 原始微博
-│       ├── rumor-repost/      # 谣言转发
-│       └── non-rumor-repost/  # 非谣言转发
-│
-├── notebooks/                 # Jupyter笔记本
-│   ├── 1_数据探索.ipynb        # 数据集分析与可视化
-│   ├── 2_特征工程.ipynb        # 特征提取与分析
-│   └── 3_模型训练与评估.ipynb   # 模型实验与比较
-│
-├── src/                       # 源代码
-│   ├── preprocessing/         # 数据预处理模块
-│   │   └── text_processor.py  # 文本清洗与分词
-│   ├── features/             # 特征工程模块
-│   │   └── feature_extractor.py # 特征提取器
-│   ├── models/               # 模型实现
-│   │   ├── neural_models.py  # 深度学习模型（BERT、BiLSTM）
-│   │   └── traditional_models.py # 传统机器学习模型（SVM、随机森林）
-│   └── utils/                # 工具函数
-│       ├── data_loader.py    # 数据加载
-│       ├── data_utils.py     # 数据处理工具
-│       └── trainer.py        # 模型训练器
-│
-├── webapp/                    # Web应用
-│   └── app.py                # Streamlit应用入口
-│
-├── results/                   # 实验结果
-│   ├── models/               # 保存的模型
-│   │   ├── bert_model.pt     # BERT模型
-│   │   ├── bilstm_model.pt   # BiLSTM模型
-│   │   ├── svm_model.joblib  # SVM模型
-│   │   └── rf_model.joblib   # 随机森林模型
-│   └── plots/                # 可视化图表
-│
-├── requirements.txt           # 项目依赖
-└── README.md                  # 项目说明
+├── config.py                # 配置文件
+├── preprocess.py            # 数据预处理
+├── generate_features.py     # 特征生成
+├── train_models.py          # 模型训练和预测
+├── requirements.txt         # 依赖库列表
+├── data/                    # 数据文件
+│   ├── train_sample.csv     # 训练集样例
+│   ├── test_sample.csv      # 测试集样例
+│   ├── debunking_sample.csv # 辟谣数据样例
+│   ├── stopwords.txt        # 停用词表
+│   └── sentence_symbol.txt  # 句子分隔符
+├── docs/                    # 文档和可视化
+│   ├── data_virtual.ipynb   # 数据分析和可视化
+│   ├── model.png            # 模型结构图
+│   ├── stacking.png         # 模型集成图
+│   └── train_data.png       # 训练数据分析图
+├── features/                # 特征提取
+│   ├── __init__.py
+│   ├── char_tfidf_feature.py # 字符级TF-IDF
+│   ├── count_feature.py      # 词频统计
+│   ├── io_util.py            # IO工具
+│   ├── math_util.py          # 数学工具
+│   ├── ngram.py              # N-gram处理
+│   ├── onehot_feature.py     # 独热编码
+│   ├── sentiment_feature.py  # 情感分析
+│   ├── svd_feature.py        # SVD降维
+│   ├── tfidf_feature.py      # 词级TF-IDF
+│   ├── tokenizer.py          # 文本分词
+│   └── word2vec_feature.py   # 词向量特征
+├── models/                  # 模型实现
+│   ├── __init__.py
+│   ├── base_model.py         # 模型基类
+│   ├── bert_model.py         # BERT模型
+│   ├── bert_tokenization.py  # BERT分词
+│   ├── catboost_model.py     # CatBoost模型
+│   ├── dpcnn_model.py        # DPCNN模型
+│   ├── lr_model.py           # 逻辑回归模型
+│   ├── rnn_model.py          # RNN模型
+│   ├── score.py              # 评分工具
+│   ├── textcnn_model.py      # TextCNN模型
+│   └── xgboost_model.py      # XGBoost模型
+└── submits/                 # 预测结果
+    ├── catboost_submit.csv   # CatBoost提交结果
+    ├── lr_submit.csv         # 逻辑回归提交结果
+    ├── README.md             # 提交说明
+    └── xgboost_submit.csv    # XGBoost提交结果
 ```
 
-## 使用说明
+## 数据处理流程
+
+1. **数据预处理**：
+   - 加载训练集、测试集和辟谣数据集
+   - 去除文本重复、过长和过短的样本
+   - 合并数据集并保存为pickle格式
+
+2. **特征提取**：
+   - 使用jieba进行中文分词
+   - 生成unigram、bigram和trigram特征
+   - 应用多种特征提取器：
+     * 词频统计
+     * 字符级TF-IDF
+     * 词级TF-IDF
+     * SVD降维
+     * Word2Vec词向量
+     * 情感分析
+     * 独热编码
+
+3. **模型训练与预测**：
+   - 传统机器学习模型：逻辑回归、XGBoost、CatBoost
+   - 深度学习模型：TextCNN、RNN、DPCNN、BERT
+   - 支持K折交叉验证和模型评估
+
+## 主要模型
+
+### 传统机器学习模型
+
+- **逻辑回归**：基础线性分类器，计算速度快，可解释性好
+- **XGBoost**：梯度提升树模型，处理非线性关系能力强
+- **CatBoost**：针对类别特征优化的梯度提升树模型
+
+### 深度学习模型
+
+- **TextCNN**：使用卷积神经网络提取文本局部特征
+- **RNN**：使用循环神经网络捕捉文本序列特征
+- **DPCNN**：深度金字塔CNN，层次化提取文本特征
+- **BERT**：预训练语言模型，通过微调适应假新闻检测任务
+
+## 使用方法
 
 ### 环境配置
 
 ```bash
-# 克隆项目
-git clone https://github.com/yourusername/Fake-News.git
-cd Fake-News
-
-# 创建并激活虚拟环境
-python -m venv venv
-source venv/bin/activate  # 在Windows上使用: venv\Scripts\activate
-
 # 安装依赖
 pip install -r requirements.txt
 ```
 
-### 数据准备
+### 数据预处理
 
-数据集已包含在项目中，但如需重新下载或更新，请参考`data/README.md`中的说明。
-
-### 运行示例
-
-1. **数据探索与预处理**
 ```bash
-jupyter notebook notebooks/1_数据探索.ipynb
+python preprocess.py
 ```
 
-2. **模型训练**
+### 特征生成
+
 ```bash
-# 训练BERT模型
-python src/train.py --model bert --epochs 5
-
-# 训练BiLSTM模型
-python src/train.py --model bilstm --epochs 10
-
-# 训练传统机器学习模型
-python src/train.py --model svm
-python src/train.py --model random_forest
+python generate_features.py
 ```
 
-3. **模型评估**
+### 模型训练与预测
+
 ```bash
-python src/evaluate.py --model bert --model_path results/models/bert_model.pt
+python train_models.py
 ```
 
-4. **启动Web应用**
-```bash
-# 启动Streamlit应用
-streamlit run webapp/app.py
+默认只运行基础模型（逻辑回归），如需运行其他模型，请修改`train_models.py`中的主函数：
+
+```python
+if __name__ == '__main__':
+    base_model()               # 运行基础模型
+    # train_classic_models()   # 运行传统机器学习模型
+    # train_deep_models()      # 运行深度学习模型
+    # train_bert_model()       # 运行BERT模型
 ```
 
-Web应用提供以下功能：
-- 支持多个检测模型的选择（BERT、BiLSTM、SVM、随机森林）
-- 单条文本检测：输入文本直接检测
-- 批量检测：支持上传txt或csv文件进行批量检测
-- 详细分析：显示文本特征、关键词和置信度
-- 检测结果导出：支持将批量检测结果导出为CSV文件
-```
+## 评估指标
 
-## 实验结果
+- 准确率（Accuracy）
+- 分类报告（Classification Report）
+- 混淆矩阵（Confusion Matrix）
 
-主要模型性能比较（在测试集上）：
+## 依赖库
 
-| 模型          | 准确率  | 精确率  | 召回率  | F1分数  | 推理速度 |
-|--------------|--------|--------|--------|--------|---------|
-| BERT         | 0.91   | 0.90   | 0.92   | 0.91   | 较慢    |
-| BiLSTM       | 0.87   | 0.86   | 0.88   | 0.87   | 中等    |
-| SVM          | 0.82   | 0.81   | 0.83   | 0.82   | 快     |
-| 随机森林      | 0.84   | 0.83   | 0.85   | 0.84   | 快     |
+- numpy
+- pandas
+- jieba
+- scipy
+- scikit-learn
+- wordcloud
+- pysenti
+- xgboost
+- catboost
+- keras
+- kashgari-tf
 
-各模型特点：
-- **BERT**：性能最好，适合复杂文本的理解，但推理速度较慢
-- **BiLSTM**：性能良好，平衡了准确性和速度
-- **SVM**：速度快，适合实时检测，性能尚可
-- **随机森林**：可解释性好，训练和推理速度快
+## 项目特点
 
-## 进一步改进
+1. **模块化设计**：特征提取器和模型采用面向对象设计，易于扩展和维护
+2. **多特征融合**：结合文本统计特征、语义特征和情感特征
+3. **多模型集成**：支持多种类型的模型训练和预测
+4. **灵活配置**：通过配置文件集中管理参数
+5. **完整流程**：包含从数据预处理到模型评估的全流程实现
 
-- 模型优化：
-  - 模型集成与投票机制
-  - 引入跨语言预训练模型
-  - 优化模型推理速度
+## 数据可视化
 
-- 特征增强：
-  - 引入情感分析特征
-  - 构建用户信誉模型
-  - 增加传播网络特征
+项目提供了数据分析和可视化Jupyter Notebook（`docs/data_virtual.ipynb`），用于：
+- 文本长度分布分析
+- 标签分布分析
+- 词云可视化
+- 特征重要性分析
 
-- 系统功能：
-  - 支持更多文件格式的批量检测
-  - 添加API接口支持
-  - 实现模型的在线更新
-  - 优化前端交互体验
+## 注意事项
 
-## 引用
+- 首次运行需要处理大量文本数据，可能耗时较长
+- 深度学习模型需要较高的计算资源
+- BERT模型需要预先下载预训练模型，请修改`config.py`中的`pretrained_bert_path`
 
-如果您使用了本项目，请引用以下论文：
+## 未来改进
 
-```
-@article{liu2015rumors,
-  title={中文社交媒体谣言统计语义分析},
-  author={刘知远 and 张乐 and 涂存超 and 孙茂松},
-  journal={中国科学: 信息科学},
-  volume={12},
-  pages={1536--1546},
-  year={2015}
-}
-
-@article{song2018ced,
-  title={CED: Credible Early Detection of Social Media Rumors},
-  author={Song, Changhe and Tu, Cunchao and Yang, Cheng and Liu, Zhiyuan and Sun, Maosong},
-  journal={arXiv preprint arXiv:1811.04175},
-  year={2018}
-}
-```
-
-## 许可证
-
-MIT License
-
-## 联系方式
-
-如有任何问题，请联系：helong_001@qq.com
+- 添加更多文本特征，如情感极性、主题分布等
+- 优化模型参数，提高检测准确率
+- 增加模型可解释性分析
+- 支持增量学习和在线预测
+- 构建Web演示界面
