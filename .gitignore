@@ -59,3 +59,5 @@ catboost_info/test_error.tsv
 catboost_info/time_left.tsv
 catboost_info/learn/events.out.tfevents
 catboost_info/test/events.out.tfevents
+models/__pycache__/bert_tokenization.cpython-310.pyc
+__pycache__/config.cpython-310.pyc

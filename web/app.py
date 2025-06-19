@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from flask import Flask, render_template_string, request, jsonify
 import joblib
 import glob
@@ -40,7 +42,10 @@ def load_tokenizer(vocab_path):
     word_index = {}
     with open(vocab_path, 'r', encoding='utf-8') as f:
         for line in f:
-            k, v = line.strip().split('\t')
+            line = line.strip()
+            if not line or '\t' not in line:
+                continue
+            k, v = line.split('\t')
             word_index[k] = int(v)
     tokenizer.word_index = word_index
     return tokenizer

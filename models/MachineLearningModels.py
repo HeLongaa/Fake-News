@@ -64,17 +64,12 @@ class CatBoostModel(BaseClassicModel):
         model = CatBoostClassifier(loss_function='Logloss', depth=8, n_estimators=500, logging_level='Silent')
         return model
 
-    def fit_model(
-        self, model, x_train, y_train, x_valid, y_valid):
+    def fit_model(self, model, x_train, y_train, x_valid, y_valid):
         train_pool = Pool(x_train, y_train)
         eval_pool = Pool(x_valid, y_valid)
-        n_iters = model.get_params().get('n_estimators', 100)
-        for i in tqdm(range(1, n_iters + 1), desc="CatBoost Training", ncols=80):
-            model.fit(
-                train_pool,
-                eval_set=eval_pool,
-                init_model=model if i > 1 else None,
-                iterations=1,
-                use_best_model=False,
-                verbose=False
-            )
+        model.fit(
+            train_pool,
+            eval_set=eval_pool,
+            use_best_model=False,
+            verbose=10
+        )
