@@ -27,7 +27,7 @@ def generate_submit_result(data_path, predict_path, submit_path):
 
 
 def base_model():
-    from models.lr_model import LRModel
+    from models.MachineLearningModels import LRModel
     train_x, test_x, train_y = read_chartfidf_feature_label()
     m = LRModel()
     predict_path = config.output_dir + "%s_chartfidf.csv" % m.name
