@@ -18,6 +18,20 @@ from torch.utils.data import DataLoader
 
 
 def train(config, model, train_iter, dev_iter, test_iter,writer):
+    """
+    训练模型函数
+    
+    Args:
+        config: 配置对象，包含训练参数
+        model: 待训练的模型
+        train_iter: 训练数据迭代器
+        dev_iter: 验证数据迭代器
+        test_iter: 测试数据迭代器
+        writer: TensorBoard摘要写入器
+        
+    Returns:
+        无返回值，训练完成后会保存最优模型并测试模型性能
+    """
     start_time = time.time()
     # writer.add_graph(model,input_to_model=((torch.rand(4,256,256,3).to(config.device),
     #                                         torch.LongTensor(4,128).to(config.device),
@@ -107,6 +121,17 @@ def train(config, model, train_iter, dev_iter, test_iter,writer):
 
 
 def test(config, model, test_iter):
+    """
+    测试模型函数
+    
+    Args:
+        config: 配置对象，包含测试参数
+        model: 待测试的模型
+        test_iter: 测试数据迭代器
+        
+    Returns:
+        无返回值，直接打印测试结果
+    """
     # 测试函数
     model.load_state_dict(torch.load(config.save_path))
     model.eval()
@@ -123,6 +148,19 @@ def test(config, model, test_iter):
 
 
 def evaluate(config, model, data_iter, test=False):
+    """
+    评估模型函数
+    
+    Args:
+        config: 配置对象，包含评估参数
+        model: 待评估的模型
+        data_iter: 数据迭代器
+        test: 是否为测试模式，若为True则返回详细评估报告
+        
+    Returns:
+        测试模式: (准确率, 损失值, 分类报告, 混淆矩阵)
+        验证模式: (准确率, 损失值)
+    """
     model.eval()
     loss_total = 0
     predict_all = np.array([], dtype=int)

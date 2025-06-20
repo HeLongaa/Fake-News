@@ -9,6 +9,13 @@ from resnet_models import *
 
 
 class SupConLoss(nn.Module):
+    """
+    监督对比学习损失函数
+
+    Args:
+        temperature: 温度参数，用于调节相似度计算的尺度，默认0.1
+        scale_by_temperature: 是否用温度参数对损失进行缩放，默认True
+    """
 
     def __init__(self, temperature=0.1, scale_by_temperature=True):
         super(SupConLoss, self).__init__()
@@ -16,7 +23,20 @@ class SupConLoss(nn.Module):
         self.scale_by_temperature = scale_by_temperature
 
     def forward(self, features, labels=None, mask=None):
-
+        """
+        计算监督对比学习损失
+        
+        Args:
+            features: 输入特征张量，形状为 (batch_size, feature_dim)
+            labels: 标签张量，可选，形状为 (batch_size,)
+            mask: 掩码张量，可选，形状为 (batch_size, batch_size)
+            
+        Returns:
+            计算得到的对比学习损失值
+            
+        注意:
+            labels 和 mask 参数不能同时使用
+        """
         device = (torch.device('cuda')
                   if features.is_cuda
                   else torch.device('cpu'))
@@ -34,7 +54,6 @@ class SupConLoss(nn.Module):
             mask = torch.eq(labels, labels.T).float().to(device)
         else:
             mask = mask.float().to(device)
-
 
         # compute logits
         anchor_dot_contrast = torch.div(
@@ -76,6 +95,21 @@ class SupConLoss(nn.Module):
 
 
 class Mynet(nn.Module):
+    """
+    多模态假新闻检测网络
+    
+    结合 ResNet 和 BERT 的多模态神经网络，用于处理图像和文本数据。
+    
+    Args:
+        config: 配置对象，包含网络结构的相关参数：
+            - resnet_name: ResNet模型类型 ('resnet18', 'resnet34', etc.)
+            - resnet_fc: ResNet输出特征维度
+            - bert_name: BERT模型名称
+            - bert_fc: BERT输出特征维度
+            - num_classes: 分类类别数
+            - dropout: Dropout比率
+    """
+
     def __init__(self,config):
         super(Mynet, self).__init__()
         self.config=config
@@ -98,6 +132,20 @@ class Mynet(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self,inx):
+        """
+        前向传播函数
+        
+        Args:
+            inx: 包含三个元素的元组 (img, tokens, mask)：
+                - img: 图像输入张量，形状为 (batch_size, 3, H, W)
+                - tokens: BERT输入token序列，形状为 (batch_size, seq_len)
+                - mask: BERT注意力掩码，形状为 (batch_size, seq_len)
+                
+        Returns:
+            tuple：包含两个元素：
+                - img: ResNet提取的图像特征
+                - logits: 分类输出概率，经过softmax处理
+        """
         # BERT
         img,tokens,mask=inx
 
