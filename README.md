@@ -1,4 +1,4 @@
-# 假新闻检测系统
+# 多模态假新闻检测系统
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.10+-orange.svg)
@@ -7,94 +7,109 @@
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.0+-blueviolet.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-基于机器学习和自然语言处理的中文假新闻自动识别系统。
+基于深度学习的多模态（文本+图像）中文假新闻检测系统，结合BERT和ResNet实现高精度假新闻识别。
 
 ## 项目简介
 
-本项目旨在通过分析文本内容的语言特征，自动识别和分类真实新闻（标签0）与虚假新闻（标签1）。项目综合运用了多种特征提取方法和模型算法，实现了高效准确的假新闻检测。
+本项目旨在通过分析新闻文本内容和相关图像的特征，自动识别和分类真实新闻（标签0）与虚假新闻（标签1）。项目创新性地结合了BERT文本编码和ResNet图像特征提取，并通过对比学习方法提升模型性能，实现了高效准确的假新闻检测。
+
+## 技术特点
+
+- **多模态融合**：同时处理文本和图像数据，提取更全面的特征
+- **BERT文本编码**：使用预训练中文BERT模型处理文本信息
+- **ResNet图像特征**：使用ResNet系列模型提取图像特征
+- **对比学习**：通过对比学习增强模型表示能力
+- **灵活配置**：支持多种BERT和ResNet模型组合，便于实验对比
+
+## 数据集介绍
+
+项目使用了包含9528条带有图像的中文微博数据，分为真实新闻和假新闻两类：
+
+- 每条数据包含微博文本和对应图像
+- 文本数据经过BERT tokenizer处理
+- 图像数据统一调整为224×224大小
+
+数据集格式：
+```
+path,text,label
+./data/images/xxx.jpg,新闻文本内容,1
+```
+
+## 模型架构
+
+### 多模态融合模型
+
+项目实现了基于BERT和ResNet的多模态融合模型，主要组件包括：
+
+1. **文本特征提取**：
+   - 支持三种BERT模型：
+     * `bert-base-chinese`
+     * `chinese-bert-wwm-ext`
+     * `minirbt-h256`
+
+2. **图像特征提取**：
+   - 支持五种ResNet模型：
+     * `resnet18`
+     * `resnet34`
+     * `resnet50`
+     * `resnet101`
+     * `resnet152`
+
+3. **特征融合与分类**：
+   - 将BERT特征和ResNet特征融合
+   - 通过全连接层映射到同一特征空间
+   - 使用对比学习优化特征表示
+   - 输出二分类结果（真/假新闻）
+
+### 对比学习
+
+当`config.usesloss=True`时，模型同时使用交叉熵损失和对比学习损失：
+- 交叉熵损失用于分类任务
+- 对比学习损失用于增强特征表示
+- 最终损失为两者的平均值
 
 ## 项目结构
 
 ```
 Fake-News/
 ├── config.py                # 配置文件
-├── preprocess.py            # 数据预处理
-├── generate_features.py     # 特征生成
+├── data_pro.py              # 数据预处理
+├── models.py                # 模型定义
+├── resnet_models.py         # ResNet模型实现
 ├── train.py                 # 模型训练和预测
-├── requirements.txt         # 依赖库列表
+├── utils.py                 # 工具函数
 ├── data/                    # 数据文件
-│   ├── train_sample.csv     # 训练集样例
-│   ├── test_sample.csv      # 测试集样例
-│   ├── debunking_sample.csv # 辟谣数据样例
-│   ├── stopwords.txt        # 停用词表
-│   └── sentence_symbol.txt  # 句子分隔符
-├── docs/                    # 文档和可视化
-│   ├── data_virtual.ipynb   # 数据分析和可视化
-│   ├── model.png            # 模型结构图
-│   ├── stacking.png         # 模型集成图
-│   └── train_data.png       # 训练数据分析图
-├── utils/                   # 工具函数和特征提取
-│   ├── __init__.py
-│   ├── char_tfidf.py        # 字符级TF-IDF
-│   ├── count.py             # 词频统计
-│   ├── io_util.py           # IO工具
-│   ├── math_util.py         # 数学工具
-│   ├── ngram.py             # N-gram处理
-│   ├── onehot.py            # 独热编码
-│   ├── sentiment.py         # 情感分析
-│   ├── svd.py               # SVD降维
-│   ├── tfidf.py             # 词级TF-IDF
-│   ├── tokenizer.py         # 文本分词
-│   └── word2vec.py          # 词向量特征
-├── models/                  # 模型实现
-│   ├── __init__.py
-│   ├── base_model.py         # 模型基类
-│   ├── MachineLearningModels.py # 传统机器学习模型
-│   ├── DeepLearningModels.py    # 深度学习模型
-│   ├── bert_model.py         # BERT模型
-│   ├── bert_tokenization.py  # BERT分词
-│   └── score.py              # 评分工具
-└──
+│   ├── readme.txt           # 数据集说明
+│   ├── test.csv             # 测试集
+│   ├── train.csv            # 训练集
+│   ├── val.csv              # 验证集
+│   └── images/              # 图像文件夹
+└── bert_model/              # 预训练BERT模型
+    ├── bert-base-chinese/
+    ├── chinese-bert-wwm-ext/
+    └── minirbt-h256/
 ```
 
-## 数据处理流程
+## 配置说明
 
-1. **数据预处理**：
-   - 加载训练集、测试集和辟谣数据集
-   - 去除文本重复、过长和过短的样本
-   - 合并数据集并保存为pickle格式
+主要配置参数（在`config.py`中）：
 
-2. **特征提取**：
-   - 使用jieba进行中文分词
-   - 生成unigram、bigram和trigram特征
-   - 应用多种特征提取器：
-     * 词频统计（count.py）
-     * 字符级TF-IDF（char_tfidf.py）
-     * 词级TF-IDF（tfidf.py）
-     * SVD降维（svd.py）
-     * Word2Vec词向量（word2vec.py）
-     * 情感分析（sentiment.py）
-     * 独热编码（onehot.py）
+```python
+# 训练参数
+self.num_epochs = 20      # 训练轮数
+self.batch_size = 32      # 批次大小
+self.pad_size = 128       # 文本最大长度
 
-3. **模型训练与预测**：
-   - 传统机器学习模型：逻辑回归、XGBoost、CatBoost
-   - 深度学习模型：TextCNN、RNN、DPCNN、BERT
-   - 支持K折交叉验证和模型评估
+# 学习率设置
+self.bert_learning_rate = 1e-5    # BERT学习率
+self.resnet_learning_rate = 2e-5  # ResNet学习率
+self.other_learning_rate = 2e-5   # 其他层学习率
 
-## 主要模型
-
-### 传统机器学习模型 (MachineLearningModels.py)
-
-- **逻辑回归**：基础线性分类器，计算速度快，可解释性好
-- **XGBoost**：梯度提升树模型，处理非线性关系能力强
-- **CatBoost**：针对类别特征优化的梯度提升树模型
-
-### 深度学习模型 (DeepLearningModels.py)
-
-- **TextCNN**：使用卷积神经网络提取文本局部特征
-- **RNN**：使用循环神经网络捕捉文本序列特征
-- **DPCNN**：深度金字塔CNN，层次化提取文本特征
-- **BERT**：预训练语言模型，通过微调适应假新闻检测任务
+# 模型选择
+self.bert_name = 'bert_model/minirbt-h256'  # BERT模型类型
+self.resnet_name = 'resnet18'               # ResNet模型类型
+self.usesloss = True                        # 是否使用对比学习
+```
 
 ## 使用方法
 
@@ -102,94 +117,51 @@ Fake-News/
 
 ```bash
 # 安装依赖
-pip install -r requirements.txt
+pip install torch torchvision transformers pandas numpy pillow opencv-python tensorboardX
 ```
 
 ### 数据预处理
 
 ```bash
-python preprocess.py
+# 处理原始数据
+python data_pro.py
 ```
 
-### 特征生成
+### 训练模型
 
 ```bash
-python generate_features.py
+# 使用默认配置训练
+python train.py
 ```
 
-### 训练与模型选择
+### 修改配置
 
-支持通过命令行参数选择训练的模型类型：
-
-- 只训练基础模型（逻辑回归）：
-  ```bash
-  python train.py --model=base
-  ```
-- 训练所有经典机器学习模型（LR、XGBoost、CatBoost）：
-  ```bash
-  python train.py --model=classic
-  ```
-- 训练所有深度学习模型（TextCNN、RNN、DPCNN）：
-  ```bash
-  python train.py --model=deep
-  ```
-- 训练BERT模型：
-  ```bash
-  python train.py --model=bert
-  ```
-
-如不指定`--model`参数，默认只训练基础模型（base）。
-
-### 模型文件保存
-
-所有训练得到的模型文件均会自动保存在 `output/models/` 目录下，便于统一管理和后续加载。
+可以在`config.py`中修改以下参数进行实验：
+- 更改BERT模型：修改`self.bert_name`
+- 更改ResNet模型：修改`self.resnet_name`
+- 调整学习率：修改`self.bert_learning_rate`等参数
+- 开关对比学习：修改`self.usesloss`
 
 ## 评估指标
 
 - 准确率（Accuracy）
 - 分类报告（Classification Report）
-- 混淆矩阵（Confusion Matrix）
+- 损失曲线（通过TensorBoard可视化）
 
-## 依赖库
+## 运行要求
 
-- numpy
-- pandas
-- jieba
-- scipy
-- scikit-learn
-- wordcloud
-- pysenti
-- xgboost
-- catboost
-- keras
-- kashgari-tf
-
-## 项目特点
-
-1. **模块化设计**：工具函数和模型采用面向对象设计，易于扩展和维护
-2. **多特征融合**：结合文本统计特征、语义特征和情感特征
-3. **多模型集成**：支持多种类型的模型训练和预测
-4. **灵活配置**：通过配置文件集中管理参数
-5. **完整流程**：包含从数据预处理到模型评估的全流程实现
-
-## 数据可视化
-
-项目提供了数据分析和可视化Jupyter Notebook（`docs/data_virtual.ipynb`），用于：
-- 文本长度分布分析
-- 标签分布分析
-- 词云可视化
-- 特征重要性分析
+- Python 3.8+
+- PyTorch 1.10+
+- Transformers 4.0+
+- CUDA支持（推荐用于加速训练）
+- 至少8GB显存（对于较大模型如ResNet101）
 
 ## 注意事项
 
-- 首次运行需要处理大量文本数据，可能耗时较长
+- 首次运行需要下载预训练的BERT模型
 - 深度学习模型需要较高的计算资源
-- BERT模型需要预先下载预训练模型，请修改`config.py`中的`pretrained_bert_path`
+- 对于`minirbt-h256`模型，建议使用更大的学习率（如1e-4）
 
-## 未来改进
+## License
 
-- 添加更多文本特征，如情感极性、主题分布等
-- 优化模型参数，提高检测准确率
-- 增加模型可解释性分析
-- 支持增量学习和在线预测
-- 构建Web演示界面
+本项目采用MIT许可证。详情请参阅LICENSE文件。
