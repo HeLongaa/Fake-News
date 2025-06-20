@@ -80,6 +80,7 @@ Fake-News/
 ├── data_pro.py              # 数据预处理
 ├── models.py                # 模型定义
 ├── resnet_models.py         # ResNet模型实现
+├── download_model.py        # bert模型下载
 ├── train.py                 # 模型训练和预测
 ├── utils.py                 # 工具函数
 ├── data/                    # 数据文件
