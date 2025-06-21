@@ -47,8 +47,8 @@ path,text,label
 
 1. **文本特征提取**：
    - 支持三种BERT模型：
-     * `bert-base-chinese`
-     * `chinese-bert-wwm-ext`
+     * `bert-base-chinese ✓`
+     * `chinese-bert-wwm-ext ✓`
      * `minirbt-h256`
 
 2. **图像特征提取**：
@@ -56,7 +56,7 @@ path,text,label
      * `resnet18`
      * `resnet34`
      * `resnet50`
-     * `resnet101`
+     * `resnet101 ✓`
      * `resnet152`
 
 3. **特征融合与分类**：
