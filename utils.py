@@ -16,35 +16,31 @@ from config import Config
 # a.通过词典导入分词器
 #"bert-base-chinese"
 
+
 #bert_model/chinese-bert-wwm-ext
 
 #tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
-'''
-多模态假新闻检测数据集类
-
-该类继承自torch.utils.data.Dataset，用于加载和处理图像和文本数据。
-
-数据集包含图像路径、文本内容和标签（如果是训练模式）。
-'''
 class My_Dataset(Dataset):
     def __init__(self,path,config,iftrain):#### 读取数据集
         self.config=config
         #启用训练模式，加载数据和标签
+        #D:\A_sell_project\cv\多模态虚假新闻分类\data\train.csv
         self.iftrain=iftrain
         df = pd.read_csv(path).sample(frac=self.config.frac)
-        self.img_path = df['path'].to_list()
+        self.img_path = df['path'].to_list() #[img]
         self.text = df['text'].to_list()
         self.tokenizer = BertTokenizer.from_pretrained(self.config.bert_name)
 
         #启用训练模式，加载数据和标签
         if self.iftrain==1:
-            self.labels=df['label'].to_list()
+            self.labels=df['label'].to_list()#[label]
+
 
     def __getitem__(self, idx):
         img=Image.open(self.img_path[idx])
         img=img.convert("RGB")
         img=np.array(img)
-        img=cv2.resize(img,(224,224))
+        img=cv2.resize(img,(224,224))#
         img = img / 255.
         img=np.transpose(img,(2,0,1))
         img = torch.tensor(img, dtype=torch.float32)
@@ -60,7 +56,7 @@ class My_Dataset(Dataset):
                   max_length=self.config.pad_size,  # 最大句子长度
                   padding='max_length',  # 补零到最大长度
                   truncation=True)
-        print(text)
+        #print(text)
         # 中文-英文  （t1[我 吃 饭],t2[i eat food]）  [[0,0,0,0,0],[1,1,1,1,1]]
         #text 三个部分  token_type_ids(句子对 中文句子 英文句子)
         input_id= torch.tensor(text['input_ids'], dtype=torch.long)

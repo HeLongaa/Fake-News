@@ -82,6 +82,7 @@ Fake-News/
 ├── resnet_models.py         # ResNet模型实现
 ├── download_model.py        # bert模型下载
 ├── train.py                 # 模型训练和预测
+├── demo.py                  # show
 ├── utils.py                 # 工具函数
 ├── data/                    # 数据文件
 │   ├── readme.txt           # 数据集说明
@@ -122,20 +123,18 @@ self.usesloss = True                        # 是否使用对比学习
 
 ```bash
 # 安装依赖
-pip install torch torchvision transformers pandas numpy pillow opencv-python tensorboardX
+pip install -r requirements.txt
 ```
 
 ### 数据预处理
 
 ```bash
-# 处理原始数据
 python data_pro.py
 ```
 
 ### 训练模型
 
 ```bash
-# 使用默认配置训练
 python train.py
 ```
 
@@ -164,9 +163,12 @@ python train.py
 ## 注意事项
 
 - 首次运行需要下载预训练的BERT模型
+   ```bash
+   python download_model.py
+   ```
 - 深度学习模型需要较高的计算资源
 - 对于`minirbt-h256`模型，建议使用更大的学习率（如1e-4）
 
 ## License
 
-本项目采用MIT许可证。详情请参阅LICENSE文件。
+本项目采用MIT许可证。

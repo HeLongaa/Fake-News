@@ -8,7 +8,7 @@ import time
 import sys
 import torch
 import numpy as np
-from models import Mynet
+from models import Mynet,SupConLoss
 from tensorboardX import SummaryWriter
 from utils import My_Dataset,get_time_dif
 from models import *
@@ -58,9 +58,19 @@ def train(config, model, train_iter, dev_iter, test_iter,writer):
         acc_list=[]
         print('Epoch [{}/{}]'.format(epoch + 1, config.num_epochs))
         for i, (trains, labels) in enumerate(train_iter):
-            outputs = model(trains)
+            fea,outputs = model(trains)
             optimizer.zero_grad()
-            loss = F.cross_entropy(outputs, labels)
+            #print(labels)
+
+            if config.usesloss:
+                bloss = F.cross_entropy(outputs, labels)
+                sloss=SupConLoss()
+                sloss=sloss(fea,labels=labels)
+                loss=(bloss+sloss)/2
+            else:
+                loss = F.cross_entropy(outputs, labels)
+
+            #print(bloss, sloss, loss)
             loss.backward()
             optimizer.step()
 
@@ -158,8 +168,14 @@ def evaluate(config, model, data_iter, test=False):
         for texts, labels in data_iter:
             #print(texts)
 
-            outputs = model(texts)
-            loss = F.cross_entropy(outputs, labels)
+            fea,outputs = model(texts)
+            if config.usesloss:
+                bloss = F.cross_entropy(outputs, labels)
+                sloss=SupConLoss()
+                sloss=sloss(fea,labels=labels)
+                loss=(bloss+sloss)/2
+            else:
+                loss = F.cross_entropy(outputs, labels)
             loss_total += loss
             labels = labels.data.cpu().numpy()
             predic = torch.max(outputs.data, 1)[1].cpu().numpy()  ###预测结果

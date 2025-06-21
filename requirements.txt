@@ -9,4 +9,8 @@ beautifulsoup4>=4.9.3
 requests>=2.25.1
 matplotlib>=3.4.2
 seaborn>=0.11.1
-jupyter>=1.0.0
+transformers
+torch
+torchvision
+tensorboardX
+opencv-python

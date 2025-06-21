@@ -1,0 +1,4 @@
+log/*
+model/*
+bert_model/*
+__pycache__/*

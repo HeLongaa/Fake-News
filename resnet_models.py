@@ -1,3 +1,4 @@
+
 import torch.nn as nn
 from transformers import BertModel
 import torch
@@ -7,10 +8,10 @@ import math
 import torch.utils.model_zoo as model_zoo
 
 
-# 3x3卷积的卷积结构
+
 def conv3x3(in_planes, out_planes, stride=1):
     """
-    创建一个3x3的卷积层
+    3x3的卷积层
     
     Args:
         in_planes: 输入通道数
@@ -23,7 +24,7 @@ def conv3x3(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=1, bias=False)
 
-# 残差网络中的basicblock结构
+
 class BasicBlock(nn.Module):
     """
     ResNet的基础块结构
@@ -36,7 +37,7 @@ class BasicBlock(nn.Module):
     """
     expansion = 1
     def __init__(self, inplanes, planes, stride=1, downsample=None):
-    # inplanes代表输入通道数，planes代表输出通道数。
+
         super(BasicBlock, self).__init__()
         # Conv1
         self.conv1 = conv3x3(inplanes, planes, stride)
@@ -119,15 +120,16 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
     """
-    ResNet深度残差网络实现
+    ResNet深度残差网络
     
     Args:
         block: 残差块类型（BasicBlock或Bottleneck）
         layers: 每层中残差块的数量列表
         num_classes: 输出特征维度，默认768
+        layers=参数列表 block选择不同的类
     """
     def __init__(self, block, layers, num_classes=768):
-        # layers=参数列表 block选择不同的类
+
         self.inplanes = 64
         super(ResNet, self).__init__()
         # 1.conv1
@@ -176,15 +178,6 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        """
-        前向传播函数
-        
-        Args:
-            x: 输入张量，形状为 (batch_size, 3, H, W)
-            
-        Returns:
-            输出特征向量，形状为 (batch_size, num_classes)
-        """
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -201,73 +194,30 @@ class ResNet(nn.Module):
 
         return x
 
-# 残差网络
+#残差网络
 # resnet18
 def resnet18(out_fc):
-    """
-    创建 ResNet-18 模型实例
-    
-    Args:
-        out_fc: 输出特征维度
-        
-    Returns:
-        ResNet-18 模型实例
-    """
-    model = ResNet(BasicBlock, [2, 2, 2, 2], out_fc)
+    model = ResNet(BasicBlock, [2, 2, 2, 2],out_fc)
     return model
 
 # resnet34
 def resnet34(out_fc):
-    """
-    创建 ResNet-34 模型实例
-    
-    Args:
-        out_fc: 输出特征维度
-        
-    Returns:
-        ResNet-34 模型实例
-    """
-    model = ResNet(BasicBlock, [3, 4, 6, 3], out_fc)
+
+    model = ResNet(BasicBlock, [3, 4, 6, 3],out_fc)
     return model
 
 # resnet50
 def resnet50(out_fc):
-    """
-    创建 ResNet-50 模型实例
-    
-    Args:
-        out_fc: 输出特征维度
-        
-    Returns:
-        ResNet-50 模型实例
-    """
-    model = ResNet(Bottleneck, [3, 4, 6, 3], out_fc)
+    model = ResNet(Bottleneck, [3, 4, 6, 3],out_fc)
     return model
 
 # resnet101
 def resnet101(out_fc):
-    """
-    创建 ResNet-101 模型实例
-    
-    Args:
-        out_fc: 输出特征维度
-        
-    Returns:
-        ResNet-101 模型实例
-    """
-    model = ResNet(Bottleneck, [3, 4, 23, 3], out_fc)
+
+    model = ResNet(Bottleneck, [3, 4, 23, 3],out_fc)
     return model
 
 # resnet152
 def resnet152(out_fc):
-    """
-    创建 ResNet-152 模型实例
-    
-    Args:
-        out_fc: 输出特征维度
-        
-    Returns:
-        ResNet-152 模型实例
-    """
-    model = ResNet(Bottleneck, [3, 8, 36, 3], out_fc)
+    model = ResNet(Bottleneck, [3, 8, 36, 3],out_fc)
     return model
