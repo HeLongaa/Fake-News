@@ -42,12 +42,14 @@ class SupConLoss(nn.Module):
                   else torch.device('cpu'))
         features = F.normalize(features, p=2, dim=1)
         batch_size = features.shape[0]
-        # 关于labels参数
-        if labels is not None and mask is not None:  # labels和mask不能同时定义值，因为如果有label，那么mask是需要根据Label得到的
+
+        if labels is not None and mask is not None:
             raise ValueError('Cannot define both `labels` and `mask`')
-        elif labels is None and mask is None:  # 如果没有labels，也没有mask，就是无监督学习，mask是对角线为1的矩阵，表示(i,i)属于同一类
+        elif labels is None and mask is None:  
+            # 如果没有labels，也没有mask，就是无监督学习，mask是对角线为1的矩阵，表示(i,i)属于同一类
             mask = torch.eye(batch_size, dtype=torch.float32).to(device)
-        elif labels is not None:  # 如果给出了labels, mask根据label得到，两个样本i,j的label相等时，mask_{i,j}=1
+        elif labels is not None:  
+            # 如果给出了labels, mask根据label得到，两个样本i,j的label相等时，mask_{i,j}=1
             labels = labels.contiguous().view(-1, 1)
             if labels.shape[0] != batch_size:
                 raise ValueError('Num of labels does not match num of features')
@@ -63,9 +65,9 @@ class SupConLoss(nn.Module):
         #计算每一行的最大值
         logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
         logits = anchor_dot_contrast - logits_max.detach()
-        exp_logits = torch.exp(logits)#求自然指数
+        exp_logits = torch.exp(logits)
 
-        # 构建mask                                          #对角线为1 其余为0
+
         logits_mask = torch.ones_like(mask).to(device) - torch.eye(batch_size).to(device)
         print(logits_mask)
         positives_mask = mask * logits_mask
@@ -73,7 +75,7 @@ class SupConLoss(nn.Module):
         print('*******************')
         negatives_mask = 1. - mask
 
-        num_positives_per_row = torch.sum(positives_mask, axis=1)  # 除了自己之外，正样本的个数  [2 0 2 2]
+        num_positives_per_row = torch.sum(positives_mask, axis=1)
         denominator = torch.sum(
             exp_logits * negatives_mask, axis=1, keepdims=True) + torch.sum(
             exp_logits * positives_mask, axis=1, keepdims=True)
@@ -113,7 +115,8 @@ class Mynet(nn.Module):
     def __init__(self,config):
         super(Mynet, self).__init__()
         self.config=config
-        resnet_name=self.config.resnet_name#选取resnet种类
+        resnet_name=self.config.resnet_name
+        #选取resnet种类
         if resnet_name=='resnet18':
             self.resnet=resnet18(self.config.resnet_fc)
         elif resnet_name=='resnet34':
@@ -125,7 +128,8 @@ class Mynet(nn.Module):
         elif resnet_name=='resnet152':
             self.resnet=resnet152(self.config.resnet_fc)
 
-        self.bert= BertModel.from_pretrained(self.config.bert_name)#bert的种类
+        self.bert= BertModel.from_pretrained(self.config.bert_name)
+        #bert的种类
 
         self.fc_1 = nn.Linear(self.config.bert_fc+self.config.resnet_fc, self.config.num_classes)
         self.drop=nn.Dropout(self.config.dropout)
@@ -153,12 +157,13 @@ class Mynet(nn.Module):
         img=self.resnet(img)
 
         outputs = self.bert(tokens,attention_mask=mask)
-        #emb (32,128)-(32,768)
+        # emb (32,128)-(32,768)
         pooled_output = outputs[1]
         pooled_output=self.drop(pooled_output)
         fea=torch.cat([img,pooled_output],1)
-        #fea=self.drop(fea)
+        # fea=self.drop(fea)
         logits = self.fc_1(fea)
         logits=self.softmax(logits)
-
-        return img,logits#返回的第一个是需要对比的特征，img就为图像特征，fea就为全特征
+        # 返回的第一个是需要对比的特征，img就为图像特征，fea就为全特征
+        return img,logits
+   
