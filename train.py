@@ -8,11 +8,11 @@ import time
 import sys
 import torch
 import numpy as np
-from models import Mynet,SupConLoss
+from models import Mynet
 from tensorboardX import SummaryWriter
 from utils import My_Dataset,get_time_dif
 from models import *
-from Config import Config
+from config import Config
 from torch.utils.data import DataLoader
 
 
@@ -58,19 +58,9 @@ def train(config, model, train_iter, dev_iter, test_iter,writer):
         acc_list=[]
         print('Epoch [{}/{}]'.format(epoch + 1, config.num_epochs))
         for i, (trains, labels) in enumerate(train_iter):
-            fea,outputs = model(trains)
+            outputs = model(trains)
             optimizer.zero_grad()
-            #print(labels)
-
-            if config.usesloss:
-                bloss = F.cross_entropy(outputs, labels)
-                sloss=SupConLoss()
-                sloss=sloss(fea,labels=labels)
-                loss=(bloss+sloss)/2
-            else:
-                loss = F.cross_entropy(outputs, labels)
-
-            #print(bloss, sloss, loss)
+            loss = F.cross_entropy(outputs, labels)
             loss.backward()
             optimizer.step()
 
@@ -132,7 +122,6 @@ def test(config, model, test_iter):
     Returns:
         无返回值，直接打印测试结果
     """
-    # 测试函数
     model.load_state_dict(torch.load(config.save_path))
     model.eval()
     start_time = time.time()
@@ -169,14 +158,8 @@ def evaluate(config, model, data_iter, test=False):
         for texts, labels in data_iter:
             #print(texts)
 
-            fea,outputs = model(texts)
-            if config.usesloss:
-                bloss = F.cross_entropy(outputs, labels)
-                sloss=SupConLoss()
-                sloss=sloss(fea,labels=labels)
-                loss=(bloss+sloss)/2
-            else:
-                loss = F.cross_entropy(outputs, labels)
+            outputs = model(texts)
+            loss = F.cross_entropy(outputs, labels)
             loss_total += loss
             labels = labels.data.cpu().numpy()
             predic = torch.max(outputs.data, 1)[1].cpu().numpy()  ###预测结果
