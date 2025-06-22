@@ -5,7 +5,6 @@
 ![Transformers](https://img.shields.io/badge/Transformers-4.0+-green.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.0+-blueviolet.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 基于深度学习的多模态（文本+图像）中文假新闻检测系统，结合BERT和ResNet实现高精度假新闻识别。
 
@@ -30,6 +29,10 @@
 - 每条数据包含微博文本和对应图像
 - 文本数据经过BERT tokenizer处理
 - 图像数据统一调整为224×224大小
+
+数据预处理流程：
+
+![数据预处理](assets/data_pro.png)
 
 数据集格式：
 ```
