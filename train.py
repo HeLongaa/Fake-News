@@ -221,7 +221,6 @@ if __name__ == '__main__':
     mynet= mynet.to(config.device)
     print(mynet.parameters)
 
-    #训练结束后可以注释掉train函数只跑test评估模型性能
     #test(config, mynet, test_iter)
     train(config, mynet, train_iter, dev_iter, test_iter,writer)
 
