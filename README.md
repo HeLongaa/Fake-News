@@ -9,9 +9,11 @@
 
 基于深度学习的多模态（文本+图像）中文假新闻检测系统，结合BERT和ResNet实现高精度假新闻识别。
 
+[Github](https://github.com/HeLongaa/Fake-News)
+
 ## 项目简介
 
-本项目旨在通过分析新闻文本内容和相关图像的特征，自动识别和分类真实新闻（标签0）与虚假新闻（标签1）。项目创新性地结合了BERT文本编码和ResNet图像特征提取，并通过对比学习方法提升模型性能，实现了高效准确的假新闻检测。
+本项目旨在通过分析新闻文本内容和相关图像的特征，自动识别和分类真实新闻（标签0）与虚假新闻（标签1）。项目结合BERT文本编码和ResNet图像特征提取，并通过对比学习方法提升模型性能，实现了高效准确的假新闻检测。
 
 ## 技术特点
 
@@ -138,13 +140,20 @@ python data_pro.py
 python train.py
 ```
 
+### 结果可视化
+
+bert-base-chinese_resnet18是模型名称
+```bash
+tensorboard --logdir=log/bert-base-chinese_resnet18 --port=6006
+```
+
 ### 修改配置
 
-可以在`config.py`中修改以下参数进行实验：
+在`config.py`中修改以下参数进行实验：
 - 更改BERT模型：修改`self.bert_name`
 - 更改ResNet模型：修改`self.resnet_name`
 - 调整学习率：修改`self.bert_learning_rate`等参数
-- 开关对比学习：修改`self.usesloss`
+- 对比学习：修改`self.usesloss`
 
 ## 评估指标
 
@@ -167,8 +176,8 @@ python train.py
    python download_model.py
    ```
 - 深度学习模型需要较高的计算资源
-- 对于`minirbt-h256`模型，建议使用更大的学习率（如1e-4）
+- 对于`minirbt-h256`模型，更大的学习率效果更好
 
-## License
+## 参考
 
-本项目采用MIT许可证。
+[Hierarchical Multi-modal Contextual Attention Network for Fake News Detection](https://dl.acm.org/doi/10.1145/3404835.3462871)

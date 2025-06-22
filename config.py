@@ -10,7 +10,7 @@ import torch
     4. 管理训练过程中的设备选择和资源分配
     5. self.bert_name和self.resnet_name决定模型的具体结构
 """
-#通过修改self.bert_name和self.resnet_name来决定模型的具体结构
+
 class Config(object):
 
     def __init__(self):
@@ -39,7 +39,7 @@ class Config(object):
         self.dropout = 0.3
         self.require_improvement = 2000
         self.num_classes = 2
-        self.num_epochs = 20   # epoch数
+        self.num_epochs = 20
         self.batch_size =32
         self.pad_size = 128
         self.bert_learning_rate = 1e-5

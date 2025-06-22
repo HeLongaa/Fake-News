@@ -109,7 +109,7 @@ def analyze_dataset_statistics() -> Dict[str, Tuple[int, float, float]]:
 '''
 处理后的数据统计
 '''
-# 配置中文字体，使用更通用的字体设置
+
 def setup_chinese_font():
     """设置中文字体，按优先级尝试不同的字体"""
     fonts = ['SimHei', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Arial Unicode MS']

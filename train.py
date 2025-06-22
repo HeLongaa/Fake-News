@@ -166,7 +166,6 @@ def evaluate(config, model, data_iter, test=False):
     labels_all = np.array([], dtype=int)
     with torch.no_grad():
         for texts, labels in data_iter:
-            #print(texts)
 
             fea,outputs = model(texts)
             if config.usesloss:
@@ -178,11 +177,8 @@ def evaluate(config, model, data_iter, test=False):
                 loss = F.cross_entropy(outputs, labels)
             loss_total += loss
             labels = labels.data.cpu().numpy()
-            predic = torch.max(outputs.data, 1)[1].cpu().numpy()  ###预测结果
-            # print(outputs)
-            # print(predic)
-            # print(labels)
-            # print('*************************')
+            predic = torch.max(outputs.data, 1)[1].cpu().numpy()
+
             labels_all = np.append(labels_all, labels)
             predict_all = np.append(predict_all, predic)
 
@@ -202,7 +198,7 @@ if __name__ == '__main__':
     np.random.seed(1)
     torch.manual_seed(1)
     torch.cuda.manual_seed_all(1)
-    torch.backends.cudnn.deterministic = True  # 保证每次结果一样
+    torch.backends.cudnn.deterministic = True
 
     print("Loading data...")
 
@@ -212,16 +208,12 @@ if __name__ == '__main__':
     test_data = My_Dataset('./data/test.csv',config,1)
 
 
-    train_iter=DataLoader(train_data, batch_size=config.batch_size,shuffle=True)   ##训练迭代器
-    dev_iter = DataLoader(dev_data, batch_size=config.batch_size,shuffle=True)      ###验证迭代器
-    test_iter = DataLoader(test_data, batch_size=config.batch_size,shuffle=True)   ###测试迭代器
-    # 训练
+    train_iter=DataLoader(train_data, batch_size=config.batch_size,shuffle=True)
+    dev_iter = DataLoader(dev_data, batch_size=config.batch_size,shuffle=True)
+    test_iter = DataLoader(test_data, batch_size=config.batch_size,shuffle=True)
     mynet =Mynet(config)
-    ## 模型放入到GPU中去
     mynet= mynet.to(config.device)
     print(mynet.parameters)
 
-    #test(config, mynet, test_iter)
+    # test(config, mynet, test_iter)
     train(config, mynet, train_iter, dev_iter, test_iter,writer)
-
-#tensorboard --logdir=log/bert-base-chinese_resnet18 --port=6006

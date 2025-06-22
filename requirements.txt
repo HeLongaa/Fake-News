@@ -14,3 +14,4 @@ torch
 torchvision
 tensorboardX
 opencv-python
+streamlit

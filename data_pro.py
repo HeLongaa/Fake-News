@@ -14,14 +14,14 @@ import logging
     3. 划分训练集和验证集
 """
 
-# 配置日志
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# 常量定义
+
 DATA_DIR = './data'
 IMAGES_DIR = f'{DATA_DIR}/images'
 TWEETS_DIR = f'{DATA_DIR}/tweets'
@@ -57,17 +57,15 @@ def process_tweet_data(input_path: str, label: int, output_path: str, available_
             lines = file.readlines()
             
         if len(lines) % 3 != 0:
-            logger.error(f"文件 {input_path} 的行数不是3的倍数，数据格式可能有误")
+            logger.error(f"数据格式错误")
             return None
             
         total_entries = len(lines) // 3
         logger.info(f"处理 {input_path} 中的 {total_entries} 条数据")
         
         for i in range(total_entries):
-            # 获取元数据、图片URL和文本内容
-            _, img_urls, text = lines[i*3], lines[i*3+1].strip(), lines[i*3+2].strip()
-            
-            # 记录文本长度
+            _, img_urls, text = lines[i*3], lines[i*3+1].strip(), lines[i*3+2].strip()        
+
             text_lengths.append(len(text))
             
             # 处理图片URL
@@ -78,7 +76,7 @@ def process_tweet_data(input_path: str, label: int, output_path: str, available_
                     if img_name in available_imgs:
                         img_paths.append(f'{IMAGES_DIR}/{img_name}')
             
-            # 将每个图片与文本和标签组合，写入CSV
+
             for img_path in img_paths:
                 append_to_csv(output_path, [(img_path, text, label)])
                 
@@ -87,7 +85,7 @@ def process_tweet_data(input_path: str, label: int, output_path: str, available_
         return avg_length
         
     except Exception as e:
-        logger.error(f"处理 {input_path} 时出错: {e}")
+        logger.error(f"处理 {input_path} 出错: {e}")
         return None
 
 
@@ -120,7 +118,7 @@ def split_train_validation(train_path: str, val_ratio: float = VALIDATION_RATIO)
     """
     try:
         df = pd.read_csv(train_path, encoding='utf-8')
-        val_df = df.sample(frac=val_ratio, random_state=42)  # 固定随机种子以便结果可重现
+        val_df = df.sample(frac=val_ratio, random_state=42)
         train_df = df.drop(index=val_df.index)
         
         logger.info(f"训练集样本数: {len(train_df)}")
@@ -138,11 +136,10 @@ def split_train_validation(train_path: str, val_ratio: float = VALIDATION_RATIO)
 
 def main():
     """主函数"""
-    # 加载可用图片
+
     available_imgs = load_available_images()
     logger.info(f"找到 {len(available_imgs)} 张可用图片")
     
-    # 处理训练数据
     train_path = os.path.join(DATA_DIR, 'train.csv')
     create_empty_csv(train_path)
     process_tweet_data(os.path.join(TWEETS_DIR, 'train_rumor.txt'), 1, train_path, available_imgs)

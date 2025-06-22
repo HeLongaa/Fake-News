@@ -77,7 +77,7 @@ class Bottleneck(nn.Module):
         stride: 步长，默认为1
         downsample: 下采样层，用于残差连接
     """
-    expansion = 4      # 输出通道数的倍乘
+    expansion = 4
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(Bottleneck, self).__init__()
@@ -169,11 +169,10 @@ class ResNet(nn.Module):
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
-        # 每个blocks的第一个residual结构保存在layers列表中。
+
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
-            # 该部分是将每个blocks的剩下residual 结构保存在layers列表中，这样就完成了一个blocks的构造。
 
         return nn.Sequential(*layers)
 
@@ -189,7 +188,7 @@ class ResNet(nn.Module):
         x = self.layer4(x)
 
         x = self.avgpool(x)
-        x = x.view(x.size(0), -1)  # 将输出结果展开为一维向量
+        x = x.view(x.size(0), -1)  # 将输出结果展开
         x = self.fc(x)
 
         return x
